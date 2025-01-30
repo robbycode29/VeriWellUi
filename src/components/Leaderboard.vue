@@ -5,7 +5,7 @@
             <span class="text-sm sm:text-base text-[#BBA2C7]">Rankings of health influencers based on scientific accuracy, credibility and transparency. Updated using AI-powered analysis.</span>
         </div>
 
-        <!--Statistics section-->
+        <!-- Statistics section -->
         <div class="flex flex-col justify-between w-full sm:flex-row gap-2 sm:gap-5">
             <div class="flex flex-row w-full justify-center gap-4 sm:gap-4 p-2 sm:p-5 py-5 sm:py-10 bg-[#1B0E3B] border-[2px] border-[#3C2D59] rounded-xl shadow-lg">
                 <img src="@/assets/people.png" class="w-10 h-10 self-center" />
@@ -28,6 +28,11 @@
                     <span class="text-sm text-[#BBA2C7]">Average Trust Score</span>
                 </div>
             </div>
+        </div>
+
+        <!-- Search bar -->
+        <div class="flex flex-row gap-2 items-center w-full">
+            <input v-model="searchQuery" @input="filterLeaderboard" type="text" class="p-2 w-full bg-[#3C2D59] rounded-lg text-white" placeholder="Search influencers..."/>
         </div>
 
         <!-- Category filter and sort by trust score -->
@@ -54,35 +59,36 @@
             </button>
         </div>
 
-        <!--Leaderboard section-->
+        <!-- Leaderboard section -->
         <div class="overflow-x-auto overflow-y-auto max-h-[500px] rounded-xl bg-[#1B0E3B] border-[2px] border-[#3C2D59] shadow-lg custom-scrollbar">
             <table class="min-w-full">
                 <thead class="sticky top-0 bg-[#1B0E3B] h-12">
-                    <tr>
-                        <th class="px-4 py-2 text-left text-sm font-medium text-[#BBA2C7]">Rank</th>
-                        <th class="px-4 py-2 text-left text-sm font-medium text-[#BBA2C7]">Influencer</th>
-                        <th class="px-4 py-2 text-left text-sm font-medium text-[#BBA2C7]">Category</th>
-                        <th class="px-4 py-2 text-left text-sm font-medium text-[#BBA2C7]">Followers</th>
-                        <th class="px-4 py-2 text-left text-sm font-medium text-[#BBA2C7]">Trust Score</th>
-                        <th class="px-4 py-2 text-left text-sm font-medium text-[#BBA2C7]">Verified Claims</th>
-                    </tr>
+                <tr>
+                    <th class="px-4 py-2 text-left text-sm font-medium text-[#BBA2C7]">Rank</th>
+                    <th class="px-4 py-2 text-left text-sm font-medium text-[#BBA2C7]">Influencer</th>
+                    <th class="px-4 py-2 text-left text-sm font-medium text-[#BBA2C7]">Category</th>
+                    <th class="px-4 py-2 text-left text-sm font-medium text-[#BBA2C7]">Followers</th>
+                    <th class="px-4 py-2 text-left text-sm font-medium text-[#BBA2C7]">Trust Score</th>
+                    <th class="px-4 py-2 text-left text-sm font-medium text-[#BBA2C7]">Verified Claims</th>
+                </tr>
                 </thead>
                 <tbody>
-                    <tr @click="navigateToDetail(item.name)" v-for="(item, index) in leaderboardData" :key="index" class="border-t border-[#3C2D59] h-12 cursor-pointer hover:bg-[#3C2D59]">
-                        <td class="px-4 py-2 text-sm">#{{ item.rank }}</td>
-                        <td class="px-4 py-2 text-sm flex flex-row gap-2 items-center min-h-12"><img src="@/assets/profile.png" class="hidden sm:block w-4 h-4"/>{{ item.name }}</td>
-                        <td class="px-4 py-2 text-sm">{{ item.category }}</td>
-                        <td class="px-4 py-2 text-sm">{{ item.followers }}</td>
-                        <td v-if="parseFloat(item.trustScore)/100 > 0.80" class="px-4 py-2 text-sm font-semibold text-green-400">{{ item.trustScore }}</td>
-                        <td v-else-if="parseFloat(item.trustScore)/100 < 0.20" class="px-4 py-2 text-sm font-semibold text-red-400">{{ item.trustScore }}</td>
-                        <td v-else class="px-4 py-2 text-sm font-semibold text-orange-400">{{ item.trustScore }}</td>
-                        <td class="px-4 py-2 text-sm">{{ item.verifiedClaims }}</td>
-                    </tr>
+                <tr @click="navigateToDetail(item.name)" v-for="(item, index) in filteredLeaderboardData" :key="index" class="border-t border-[#3C2D59] h-12 cursor-pointer hover:bg-[#3C2D59]">
+                    <td class="px-4 py-2 text-sm">#{{ item.rank }}</td>
+                    <td class="px-4 py-2 text-sm flex flex-row gap-2 items-center min-h-12"><img src="@/assets/profile.png" class="hidden sm:block w-4 h-4"/>{{ item.name }}</td>
+                    <td class="px-4 py-2 text-sm">{{ item.category }}</td>
+                    <td class="px-4 py-2 text-sm">{{ item.followers }}</td>
+                    <td v-if="parseFloat(item.trustScore)/100 > 0.80" class="px-4 py-2 text-sm font-semibold text-green-400">{{ item.trustScore }}</td>
+                    <td v-else-if="parseFloat(item.trustScore)/100 < 0.20" class="px-4 py-2 text-sm font-semibold text-red-400">{{ item.trustScore }}</td>
+                    <td v-else class="px-4 py-2 text-sm font-semibold text-orange-400">{{ item.trustScore }}</td>
+                    <td class="px-4 py-2 text-sm">{{ item.verifiedClaims }}</td>
+                </tr>
                 </tbody>
             </table>
         </div>
     </div>
 </template>
+
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { useRouter } from 'vue-router'
@@ -93,12 +99,14 @@ export default defineComponent({
         return {
             influencersRaw: [] as any[],
             leaderboardData: [] as any[],
+            filteredLeaderboardData: [] as any[],
             influencerCount: 0,
             claimsVerified: 0,
             avgTrustScore: '',
             categories: [] as string[],
             selectedCategory: 'All',
             sortOrder: 'desc',
+            searchQuery: '',
         }
     },
     setup() {
@@ -118,6 +126,9 @@ export default defineComponent({
                     }
                 })
                 this.influencersRaw = await response.json()
+                this.curateLeaderboard()
+                this.calculateStatistics()
+                this.filterLeaderboard()
             } catch (error) {
                 console.error(error)
             }
@@ -131,6 +142,7 @@ export default defineComponent({
                     }
                 })
                 this.categories = await response.json()
+                this.curateCategories()
             } catch (error) {
                 console.error(error)
             }
@@ -138,7 +150,6 @@ export default defineComponent({
         curateCategories() {
             this.categories = this.categories.filter((item: string) => item !== null)
             this.categories = ['All', ...this.categories.slice(1).sort(() => 0.5 - Math.random()).slice(0, 6)]
-
         },
         curateLeaderboard() {
             this.leaderboardData = this.influencersRaw
@@ -149,8 +160,8 @@ export default defineComponent({
                         rank: index + 1,
                         name: item.name,
                         category: item.category,
-                        followers: item.followers,
-                        trustScore: String(item.trust_score*100)+"%",
+                        followers: this.formatFollowers(item.followers),
+                        trustScore: String(item.trust_score * 100) + "%",
                         verifiedClaims: item.verified_claims
                     }
                 })
@@ -163,36 +174,38 @@ export default defineComponent({
         },
         selectCategory(category: string) {
             this.selectedCategory = category
-            this.filterByCategory()
-        },
-        filterByCategory() {
-            this.curateLeaderboard()
-            if (this.selectedCategory === 'All') {
-                return
-            }
-            this.leaderboardData = this.leaderboardData.filter((item: any) => item.category === this.selectedCategory)
+            this.filterLeaderboard()
         },
         toggleSortOrder() {
             this.sortOrder = this.sortOrder === 'asc' ? 'desc' : 'asc'
-            this.sortLeaderboard()
+            this.filterLeaderboard()
         },
-        sortLeaderboard() {
-            this.leaderboardData.sort((a: any, b: any) => {
-                return this.sortOrder === 'asc' ? parseFloat(a.trustScore) - parseFloat(b.trustScore) : parseFloat(b.trustScore) - parseFloat(a.trustScore)
-            })
+        filterLeaderboard() {
+            this.filteredLeaderboardData = this.leaderboardData
+                .filter(item => item.name.toLowerCase().includes(this.searchQuery.toLowerCase()))
+                .filter(item => this.selectedCategory === 'All' || item.category === this.selectedCategory)
+                .sort((a, b) => {
+                    if (this.sortOrder === 'asc') {
+                        return parseFloat(a.trustScore) - parseFloat(b.trustScore)
+                    } else {
+                        return parseFloat(b.trustScore) - parseFloat(a.trustScore)
+                    }
+                })
         },
+        formatFollowers(num: number) {
+            if (num >= 1_000_000_000) return (num / 1_000_000_000).toFixed(1) + 'B+'
+            if (num >= 1_000_000) return (num / 1_000_000).toFixed(1) + 'M+'
+            if (num >= 1_000) return (num / 1_000).toFixed(1) + 'K+'
+            return num.toString()
+        }
     },
-    mounted()  {
-        this.fetchInfluencers().then(() => {
-            this.curateLeaderboard()
-            this.calculateStatistics()
-        })
-        this.fetchCategories().then(() => {
-            this.curateCategories()
-        })
+    mounted() {
+        this.fetchInfluencers()
+        this.fetchCategories()
     }
 })
 </script>
+
 <style scoped>
 .custom-scrollbar::-webkit-scrollbar {
     width: 8px;
