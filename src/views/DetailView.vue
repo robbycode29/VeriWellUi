@@ -110,9 +110,11 @@
                     <h1 v-if="claim.status === 'questionable'" class="h-fit text-xs sm:text-sm font-semibold rounded-xl border-[3px] p-2 border-[#FF7F27] bg-[#1B0E3B] text-[#FF7F27]">{{ claim.status }}</h1>
                     <h1 v-else-if="claim.status === 'verified'" class="h-fit text-xs sm:text-sm font-semibold rounded-xl border-[2px] p-2 border-[#00FFA3] bg-[#1B0E3B] text-[#00FFA3]">{{ claim.status }}</h1>
                     <h1 v-else-if="claim.status === 'debunked'" class="h-fit text-xs sm:text-sm font-semibold rounded-xl border-[2px] p-2 border-[#BF2A1D] bg-[#1B0E3B] text-[#BF2A1D]">{{ claim.status }}</h1>
-                    <div class="flex flex-row gap-2 items-center">
-                        <span class="text-sm sm:text-base text-[#BBA2C7]">{{ claim.claim }}</span>
-                    </div>
+                    <a class="flex flex-row sm:gap-2 items-center justify-center" :href="claim.source ? claim.source : null" target="_blank">
+                        <span v-if="claim.source" class="underline text-sm sm:text-base text-[#BBA2C7]">{{ claim.claim }}</span>
+                        <span v-else class="text-sm sm:text-base text-[#BBA2C7]">{{ claim.claim }}</span>
+                        <img v-if="claim.source" src="@/assets/arrow-up-right.png" class="w-4 h-4 hidden sm:flex" />
+                    </a>
                 </div>
                 <div class="flex flex-col gap-1 translate-y-1">
                     <h1 v-if="claim.status === 'questionable'" class="text-lg sm:text-2xl font-semibold text-[#FF7F27]">{{ claim.trust_score * 100 }}%</h1>
