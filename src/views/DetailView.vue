@@ -16,6 +16,31 @@
         </div>
         <span>{{ claims.length > 0 ? claims[0].influencer.bio : '' }}</span>
 
+        <!-- Statistics Section -->
+        <div class="flex flex-col justify-between w-full sm:flex-row gap-2 sm:gap-5 mt-5">
+            <div class="flex flex-row w-full justify-center gap-4 sm:gap-4 p-2 sm:p-5 py-5 sm:py-10 bg-[#1B0E3B] border-[2px] border-[#3C2D59] rounded-xl shadow-lg">
+                <img src="@/assets/graph.png" class="w-10 h-10 self-center" />
+                <div class="flex flex-col gap-1">
+                    <h3 class="text-lg font-medium">{{ avgTrustScore }}</h3>
+                    <span class="text-sm text-[#BBA2C7]">Average Trust Score</span>
+                </div>
+            </div>
+            <div class="flex flex-row w-full justify-center gap-4 sm:gap-4 p-2 sm:p-5 py-5 sm:py-10 bg-[#1B0E3B] border-[2px] border-[#3C2D59] rounded-xl shadow-lg">
+                <img src="@/assets/people.png" class="w-10 h-10 self-center" />
+                <div class="flex flex-col gap-1">
+                    <h3 class="text-lg font-medium">{{ followers }}</h3>
+                    <span class="text-sm text-[#BBA2C7]">Followers</span>
+                </div>
+            </div>
+            <div class="flex flex-row w-full justify-center gap-4 sm:gap-4 p-2 sm:p-5 py-5 sm:py-10 bg-[#1B0E3B] border-[2px] border-[#3C2D59] rounded-xl shadow-lg">
+                <img src="@/assets/verified.png" class="w-10 h-10 self-center" />
+                <div class="flex flex-col gap-1">
+                    <h3 class="text-lg font-medium">{{ claimsVerified }}</h3>
+                    <span class="text-sm text-[#BBA2C7]">Claims Verified</span>
+                </div>
+            </div>
+        </div>
+
         <!-- Sorting, Searching, and Filtering Section -->
         <div class="flex flex-col gap-2 p-4 bg-[#1B0E3B] border-[2px] border-[#3C2D59] rounded-xl">
             <div class="flex flex-row gap-2 items-center w-full">
@@ -127,13 +152,16 @@ export default defineComponent({
         const route = useRoute()
         const router = useRouter()
         const decodedName = computed(() => decodeURIComponent(route.params.name as string))
-        const claims = ref([])
+        const claims = ref([]) as any
         const filteredClaims = ref([])
         const selectedCategory = ref('All')
         const selectedStatus = ref('All Statuses')
         const sortBy = ref('date')
         const sortOrder = ref('desc')
         const searchQuery = ref('')
+        const avgTrustScore = ref('')
+        const followers = ref('') as any
+        const claimsVerified = ref(0)
 
         const fetchClaims = async (name: string) => {
             try {
@@ -145,6 +173,7 @@ export default defineComponent({
                 })
                 claims.value = await response.json()
                 filteredClaims.value = claims.value
+                calculateStatistics()
             } catch (error) {
                 console.error(error)
             }
@@ -163,15 +192,15 @@ export default defineComponent({
         const sortClaims = () => {
             if (sortBy.value === 'date') {
                 filteredClaims.value.sort((a: any, b: any) => {
-                    const dateA = new Date(a.date).getTime();
-                    const dateB = new Date(b.date).getTime();
-                    return dateA - dateB;
-                });
+                    const dateA = new Date(a.date).getTime()
+                    const dateB = new Date(b.date).getTime()
+                    return dateA - dateB
+                })
             } else if (sortBy.value === 'trustScore') {
-                filteredClaims.value.sort((a: any, b: any) => a.trust_score - b.trust_score);
+                filteredClaims.value.sort((a: any, b: any) => a.trust_score - b.trust_score)
             }
             if (sortOrder.value === 'desc') {
-                filteredClaims.value.reverse();
+                filteredClaims.value.reverse()
             }
         }
 
@@ -200,6 +229,21 @@ export default defineComponent({
             filterClaims()
         }
 
+        const formatFollowers = (num: number) => {
+            if (num >= 1_000_000_000) return (num / 1_000_000_000).toFixed(1) + 'B+'
+            if (num >= 1_000_000) return (num / 1_000_000).toFixed(1) + 'M+'
+            if (num >= 1_000) return (num / 1_000).toFixed(1) + 'K+'
+            return num.toString()
+        }
+
+        const calculateStatistics = () => {
+            const totalTrustScore = claims.value.reduce((acc: number, claim: any) => acc + claim.trust_score, 0)
+            const avgScore = totalTrustScore / claims.value.length * 100
+            avgTrustScore.value = avgScore % 1 === 0 ? avgScore.toFixed(0) + '%' : avgScore.toFixed(2) + '%'
+            followers.value = claims.value.length > 0 ? formatFollowers(claims.value[0].influencer.followers) : 0
+            claimsVerified.value = claims.value.length
+        }
+
         const goBack = () => {
             router.back()
         }
@@ -208,7 +252,7 @@ export default defineComponent({
             fetchClaims(decodedName.value)
         })
 
-        return { decodedName, claims, filteredClaims, uniqueCategories, uniqueStatuses, selectedCategory, selectedStatus, sortBy, sortOrder, searchQuery, goBack, sortClaims, filterClaims, selectCategory, selectStatus, toggleSortOrder }
+        return { decodedName, claims, filteredClaims, uniqueCategories, uniqueStatuses, selectedCategory, selectedStatus, sortBy, sortOrder, searchQuery, avgTrustScore, followers, claimsVerified, goBack, sortClaims, filterClaims, selectCategory, selectStatus, toggleSortOrder }
     }
 })
 </script>
