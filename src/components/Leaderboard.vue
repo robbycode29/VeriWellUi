@@ -1,5 +1,5 @@
 <template>
-    <div class=" flex flex-col gap-5 p-2 sm:p-5 bg-[#130A29] rounded-xl text-white w-full">
+    <div class="flex flex-col gap-5 p-2 sm:p-5 bg-[#130A29] rounded-xl text-white w-full">
         <div class="flex flex-col gap-2">
             <h1 class="text-lg sm:text-2xl font-semibold">Influencer Trust Leaderboard</h1>
             <span class="text-sm sm:text-base text-[#BBA2C7]">Rankings of health influencers based on scientific accuracy, credibility and transparency. Updated using AI-powered analysis.</span>
