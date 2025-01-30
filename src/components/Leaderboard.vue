@@ -57,7 +57,7 @@
         <!--Leaderboard section-->
         <div class="overflow-x-auto overflow-y-auto max-h-[500px] rounded-xl bg-[#1B0E3B] border-[2px] border-[#3C2D59] shadow-lg custom-scrollbar">
             <table class="min-w-full">
-                <thead class="sticky top-0 bg-[#1B0E3B] ">
+                <thead class="sticky top-0 bg-[#1B0E3B] h-12">
                     <tr>
                         <th class="px-4 py-2 text-left text-sm font-medium text-[#BBA2C7]">Rank</th>
                         <th class="px-4 py-2 text-left text-sm font-medium text-[#BBA2C7]">Influencer</th>
@@ -68,12 +68,14 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="(item, index) in leaderboardData" :key="index" class="border-t border-[#3C2D59]">
+                    <tr  v-for="(item, index) in leaderboardData" :key="index" class="border-t border-[#3C2D59] h-12 cursor-pointer hover:bg-[#3C2D59]">
                         <td class="px-4 py-2 text-sm">#{{ item.rank }}</td>
-                        <td class="px-4 py-2 text-sm">{{ item.name }}</td>
+                        <td class="px-4 py-2 text-sm flex flex-row gap-2 items-center min-h-12"><img src="@/assets/profile.png" class="hidden sm:block w-4 h-4"/>{{ item.name }}</td>
                         <td class="px-4 py-2 text-sm">{{ item.category }}</td>
                         <td class="px-4 py-2 text-sm">{{ item.followers }}</td>
-                        <td class="px-4 py-2 text-sm">{{ item.trustScore }}</td>
+                        <td v-if="parseFloat(item.trustScore)/100 > 0.80" class="px-4 py-2 text-sm font-semibold text-green-400">{{ item.trustScore }}</td>
+                        <td v-else-if="parseFloat(item.trustScore)/100 < 0.20" class="px-4 py-2 text-sm font-semibold text-red-400">{{ item.trustScore }}</td>
+                        <td v-else class="px-4 py-2 text-sm font-semibold text-orange-400">{{ item.trustScore }}</td>
                         <td class="px-4 py-2 text-sm">{{ item.verifiedClaims }}</td>
                     </tr>
                 </tbody>

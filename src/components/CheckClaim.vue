@@ -35,7 +35,7 @@
                     <h1 v-else-if="status === 'verified'" class="text-xs sm:text-sm font-semibold rounded-xl border-[2px] p-2 border-[#00FFA3] bg-[#1B0E3B] text-[#00FFA3]">{{ status }}</h1>
                     <h1 v-else-if="status === 'debunked'" class="text-xs sm:text-sm font-semibold rounded-xl border-[2px] p-2 border-[#BF2A1D] bg-[#1B0E3B] text-[#BF2A1D]">{{ status }}</h1>
                 </div>
-                <div class="flex flex-col gap-1">
+                <div class="flex flex-col gap-1 translate-y-1">
                     <h1 v-if="status === 'questionable'" class="text-lg sm:text-2xl font-semibold text-[#FF7F27]">{{ trustScore*100 }}%</h1>
                     <h1 v-else-if="status === 'verified'" class="text-lg sm:text-2xl font-semibold text-[#00FFA3]">{{ trustScore*100 }}%</h1>
                     <h1 v-else-if="status === 'debunked'" class="text-lg sm:text-2xl font-semibold text-[#BF2A1D]">{{ trustScore*100 }}%</h1>
@@ -43,7 +43,7 @@
                 </div>
             </div>
             <div class="flex flex-row gap-2 items-center">
-                <img src="@/assets/ai-brain.png" class="w-8" /> <!-- AI brain image -->
+                <img src="@/assets/ai-brain.png" class="w-4" /> <!-- AI brain image -->
                 <span class="text-sm sm:text-base text-[#BBA2C7]">AI Analysis</span>
             </div>
             <div class="flex flex-col gap-2 ml-5">
@@ -56,6 +56,12 @@
                 <a v-for="item in counterEvidence" target="_blank" :key="item.id" :href="item.link" class="flex flex-row justify-between text-sm sm:text-base text-[#9D76E8] p-1 border border-[#3C2D59] rounded-lg">{{ item.title }} <img src="@/assets/arrow-up-right.png" class="w-4 h-4"/></a>
                 <span v-if="counterEvidence.length === 0" class="text-sm text-[#BBA2C7] italic">No counter-evidence found</span>
             </div>
+        </div>
+
+        <!--Failed section-->
+        <div v-if="failed" class="flex flex-col gap-2 w-full items-center">
+            <h1 class="w-full sm:w-96 text-center text-xs sm:text-sm font-semibold rounded-xl border-[2px] p-2 border-[#FF7F27] bg-[#1B0E3B] text-[#FF7F27]">Failed</h1>
+            <span class="text-sm sm:text-base text-[#BBA2C7]">The claim could not be verified. Please try again later.</span>
         </div>
     </div>
 </template>
