@@ -55,7 +55,7 @@
         </div>
 
         <!--Leaderboard section-->
-        <div class="overflow-x-auto overflow-y-auto max-h-[300px] sm:mx-h-none rounded-xl bg-[#1B0E3B] border-[2px] border-[#3C2D59] shadow-lg custom-scrollbar">
+        <div class="overflow-x-auto overflow-y-auto max-h-[500px] rounded-xl bg-[#1B0E3B] border-[2px] border-[#3C2D59] shadow-lg custom-scrollbar">
             <table class="min-w-full">
                 <thead class="sticky top-0 bg-[#1B0E3B] ">
                     <tr>
@@ -156,14 +156,11 @@ export default defineComponent({
             this.filterByCategory()
         },
         filterByCategory() {
-            // if all reset the leaderboard
             this.curateLeaderboard()
             if (this.selectedCategory === 'All') {
-                this.calculateStatistics()
                 return
             }
             this.leaderboardData = this.leaderboardData.filter((item: any) => item.category === this.selectedCategory)
-            this.calculateStatistics()
         },
         toggleSortOrder() {
             this.sortOrder = this.sortOrder === 'asc' ? 'desc' : 'asc'
