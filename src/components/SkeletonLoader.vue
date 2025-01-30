@@ -22,7 +22,7 @@ export default defineComponent({
         },
     },
     computed: {
-        style() {
+        style(): any {
             return {
                 width: this.width,
                 height: this.height,

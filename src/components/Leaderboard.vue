@@ -68,7 +68,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr  v-for="(item, index) in leaderboardData" :key="index" class="border-t border-[#3C2D59] h-12 cursor-pointer hover:bg-[#3C2D59]">
+                    <tr @click="navigateToDetail(item.name)" v-for="(item, index) in leaderboardData" :key="index" class="border-t border-[#3C2D59] h-12 cursor-pointer hover:bg-[#3C2D59]">
                         <td class="px-4 py-2 text-sm">#{{ item.rank }}</td>
                         <td class="px-4 py-2 text-sm flex flex-row gap-2 items-center min-h-12"><img src="@/assets/profile.png" class="hidden sm:block w-4 h-4"/>{{ item.name }}</td>
                         <td class="px-4 py-2 text-sm">{{ item.category }}</td>
@@ -85,6 +85,7 @@
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue'
+import { useRouter } from 'vue-router'
 
 export default defineComponent({
     name: 'LeaderboardComponent',
@@ -99,6 +100,13 @@ export default defineComponent({
             selectedCategory: 'All',
             sortOrder: 'desc',
         }
+    },
+    setup() {
+        const router = useRouter()
+        const navigateToDetail = (name: string) => {
+            router.push({ name: 'Detail', params: { name: encodeURIComponent(name) } })
+        }
+        return { navigateToDetail }
     },
     methods: {
         async fetchInfluencers() {

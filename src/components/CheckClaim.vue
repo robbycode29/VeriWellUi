@@ -98,7 +98,7 @@ export default defineComponent({
             this.researchId = data.research_id
             this.isLoading = true
         },
-        async initCheck(claim: string, researchId: number) {
+        async initCheck(claim: any, researchId: any) {
             await fetch(`http://localhost:8000/api/v1/influencers/check_claim/?claim=${claim}&research=${researchId}`, {
                 method: 'POST',
                 headers: {
@@ -106,7 +106,7 @@ export default defineComponent({
                 },
             })
         },
-        async fetchResearch(researchId: number) {
+        async fetchResearch(researchId: any) {
             const response = await fetch(`http://localhost:8000/api/v1/claim_researches/${researchId}`, {
                 method: 'GET',
                 headers: {
