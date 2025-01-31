@@ -30,6 +30,9 @@
                     <td class="px-4 py-2 text-sm" colspan="1">
                         <SkeletonLoader width="100%" height="20px" />
                     </td>
+                    <td class="px-4 py-2 text-sm" colspan="1">
+                        <SkeletonLoader width="100%" height="20px" />
+                    </td>
                 </tr>
                 <tr v-for="research in researches" :key="research.id" class="border-t border-[#3C2D59] h-12">
                     <td class="px-4 py-2 text-sm">{{ research.name }}</td>
@@ -103,16 +106,23 @@
             </div>
             <div class="flex flex-row items-center gap-2">
                 <span class="text-sm sm:text-base text-[#BBA2C7]">Verify with scientific journals</span>
-                <input type="checkbox" v-model="verifyWithJournals" class="toggle-checkbox" />
+                <input type="checkbox" v-model="verifyWithJournals" @change="populateSelectedJournals" class="toggle-checkbox" />
             </div>
             <div v-if="verifyWithJournals" class="flex flex-col gap-2 p-2 border-[2px] border-[#3C2D59] rounded-lg">
-                <div class="flex flex-wrap gap-2">
-                    <label v-for="journal in journals" :key="journal" class="flex items-center gap-2">
-                        <input type="checkbox" v-model="selectedJournals" :value="journal" />
+                <div class="grid grid-cols-2 gap-2">
+                    <label
+                        v-for="journal in journals"
+                        :key="journal"
+                        @click="selectJournal(journal)"
+                        :class="{
+                'flex flex-row justify-between items-center gap-2 border border-[#3C2D59] p-2 rounded-lg cursor-pointer': true,
+                'bg-[#3C2D59] border-[#9D76E8]': selectedJournals.includes(journal)
+            }"
+                    >
                         {{ journal }}
                     </label>
                 </div>
-                <button @click="openAddJournalModal" class="p-2 bg-[#3C2D59] rounded-lg border-2 border-[#3C2D59]">+ Add New Journal</button>
+                <button @click="openAddJournalModal" class="text-[#BBA2C7] mt-4">+ Add New Journal</button>
             </div>
             <textarea v-model="notes" class="resize-none h-[140px] p-2 bg-[#3C2D59] rounded-lg text-white" placeholder="Notes for Research Assistant"></textarea>
             <div class="flex flex-col gap-2">
@@ -133,6 +143,9 @@
         <div class="flex flex-col gap-2 border-[2px] border-gray-600 bg-gray-800 rounded-xl p-2">
             <span class="text-sm sm:text-base text-[#BBA2C7]">Disclaimer: The research will add the claims to the influencer's profile if it already exists. The research may not return the number of claims requested in the configuration if the claim duplicates an existing one (duplicates are calculated based on Levenshtein distance, when similarity is greater than 0.6), thus researches may not always increase the number of claims on a profile (may not always yield results).</span>
         </div>
+
+        <!-- Add journal modal -->
+        <AddJournalModal :isVisible="isAddJournalModalVisible" @close="closeAddJournalModal" @add="handleAddJournal" />
     </div>
 </template>
 
@@ -140,6 +153,7 @@
 import {defineComponent, onMounted, ref} from 'vue'
 import SkeletonLoader from "@/components/SkeletonLoader.vue";
 import research from "@/components/Research.vue";
+import AddJournalModal from "@/components/AddJournalModal.vue";
 
 export default defineComponent({
     name: 'AnalysisView',
@@ -149,7 +163,8 @@ export default defineComponent({
         }
     },
     components: {
-        SkeletonLoader
+        SkeletonLoader,
+        AddJournalModal
     },
     setup() {
         const researches = ref([]) as any
@@ -161,13 +176,42 @@ export default defineComponent({
         const claimsToAnalyze = ref(1) as any
         const verifyWithJournals = ref(false) as any
         const journals = ['PubMed Central', 'Nature', 'Science', 'Cell', 'The Lancet', 'New England Journal of Medicine', 'JAMA Network'] as any
-        const selectedJournals = ref(['Any']) as any
+        const selectedJournals = ref([]) as any
         const notes = ref('') as any
         const model = ref('sonar') as any
         const apiKey = ref('') as any
         const isLoading = ref(false) as any
         const researchId = ref('') as any
         const failed = ref(false) as any
+        const isAddJournalModalVisible = ref(false);
+
+        const openAddJournalModal = () => {
+            isAddJournalModalVisible.value = true;
+        };
+
+        const closeAddJournalModal = () => {
+            isAddJournalModalVisible.value = false;
+        };
+
+        const handleAddJournal = (journal: string) => {
+            journals.push(journal);
+        };
+
+        const selectJournal = (journal: string) => {
+            if (selectedJournals.value.includes(journal)) {
+                selectedJournals.value = selectedJournals.value.filter((j: any) => j !== journal);
+            } else {
+                selectedJournals.value.push(journal);
+            }
+        };
+
+        const populateSelectedJournals = () => {
+            if (verifyWithJournals.value) {
+                selectedJournals.value = journals;
+            } else {
+                selectedJournals.value = [];
+            }
+        };
 
         const fetchResearches = async () => {
             try {
@@ -236,7 +280,7 @@ export default defineComponent({
                         count: claimsToAnalyze.value,
                         influencer: influencerName.value,
                         timeframe: selectedTimeRange.value,
-                        journals: journals.value,
+                        journals: selectedJournals.value,
                         comment: notes.value,
                         key: apiKey.value,
                         model: model.value,
@@ -256,7 +300,7 @@ export default defineComponent({
                         research: researchId.value,
                         count: numInfluencers.value,
                         timeframe: selectedTimeRange.value,
-                        journals: journals.value,
+                        journals: selectedJournals.value,
                         comment: notes.value,
                         key: apiKey.value,
                         model: model.value,
@@ -338,10 +382,6 @@ export default defineComponent({
             selectedTimeRange.value = range
         }
 
-        const openAddJournalModal = () => {
-            // Implement modal logic here
-        }
-
         const goBack = () => {
             window.history.back()
         }
@@ -367,10 +407,15 @@ export default defineComponent({
             isLoading,
             failed,
             researchId,
+            isAddJournalModalVisible,
+            openAddJournalModal,
+            closeAddJournalModal,
+            handleAddJournal,
+            populateSelectedJournals,
+            selectJournal,
             createResearch,
             selectResearchType,
             selectTimeRange,
-            openAddJournalModal,
             goBack
         }
     }
