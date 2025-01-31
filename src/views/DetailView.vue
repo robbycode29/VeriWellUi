@@ -167,7 +167,7 @@ export default defineComponent({
 
         const fetchClaims = async (name: string) => {
             try {
-                const response = await fetch(`http://localhost:8000/api/v1/claims?influencer_name=${name}`, {
+                const response = await fetch(`https://veriwell-63c21104cb44.herokuapp.com/api/v1/claims?influencer_name=${name}`, {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json'

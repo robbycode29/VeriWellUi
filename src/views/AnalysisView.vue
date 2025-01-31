@@ -215,13 +215,13 @@ export default defineComponent({
 
         const fetchResearches = async () => {
             try {
-                const bulkResponse = await fetch(`http://localhost:8000/api/v1/bulk_researches/`, {
+                const bulkResponse = await fetch(`https://veriwell-63c21104cb44.herokuapp.com/api/v1/bulk_researches/`, {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json'
                     }
                 })
-                const singleResponse = await fetch(`http://localhost:8000/api/v1/single_researches/`, {
+                const singleResponse = await fetch(`https://veriwell-63c21104cb44.herokuapp.com/api/v1/single_researches/`, {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json'
@@ -274,7 +274,7 @@ export default defineComponent({
         const initCheck = async () => {
             try {
                 if (researchType.value === 'single') {
-                    const baseUrl = `http://localhost:8000/api/v1/influencers/check_influencer/`;
+                    const baseUrl = `https://veriwell-63c21104cb44.herokuapp.com/api/v1/influencers/check_influencer/`;
                     const params = {
                         research: researchId.value,
                         count: claimsToAnalyze.value,
@@ -295,7 +295,7 @@ export default defineComponent({
                         },
                     });
                 } else if (researchType.value === 'bulk') {
-                    const baseUrl = `http://localhost:8000/api/v1/influencers/check_bulk/`;
+                    const baseUrl = `https://veriwell-63c21104cb44.herokuapp.com/api/v1/influencers/check_bulk/`;
                     const params = {
                         research: researchId.value,
                         count: numInfluencers.value,
@@ -323,7 +323,7 @@ export default defineComponent({
         const createResearch = async () => {
             try {
                 isLoading.value = true
-                const response = await fetch(`http://localhost:8000/api/v1/influencers/begin_research/?research_type=${researchType.value}`, {
+                const response = await fetch(`https://veriwell-63c21104cb44.herokuapp.com/api/v1/influencers/begin_research/?research_type=${researchType.value}`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -345,8 +345,8 @@ export default defineComponent({
             const intervalId = setInterval(async () => {
                 try {
                     const endpoint = researchType.value === 'single'
-                        ? `http://localhost:8000/api/v1/single_researches/${researchId}/`
-                        : `http://localhost:8000/api/v1/bulk_researches/${researchId}/`;
+                        ? `https://veriwell-63c21104cb44.herokuapp.com/api/v1/single_researches/${researchId}/`
+                        : `https://veriwell-63c21104cb44.herokuapp.com/api/v1/bulk_researches/${researchId}/`;
 
                     const response = await fetch(endpoint, {
                         method: 'GET',

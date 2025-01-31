@@ -119,7 +119,7 @@ export default defineComponent({
     methods: {
         async fetchInfluencers() {
             try {
-                const response = await fetch(`http://localhost:8000/api/v1/influencers/`, {
+                const response = await fetch(`https://veriwell-63c21104cb44.herokuapp.com/api/v1/influencers/`, {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json'
@@ -135,7 +135,7 @@ export default defineComponent({
         },
         async fetchCategories() {
             try {
-                const response = await fetch(`http://localhost:8000/api/v1/influencers/categories/`, {
+                const response = await fetch(`https://veriwell-63c21104cb44.herokuapp.com/api/v1/influencers/categories/`, {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json'

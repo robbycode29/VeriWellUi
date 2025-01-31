@@ -88,7 +88,7 @@ export default defineComponent({
     },
     methods: {
         async createResearch() {
-            const response = await fetch(`http://localhost:8000/api/v1/influencers/begin_research/?research_type=claim`, {
+            const response = await fetch(`https://veriwell-63c21104cb44.herokuapp.com/api/v1/influencers/begin_research/?research_type=claim`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -99,7 +99,7 @@ export default defineComponent({
             this.isLoading = true
         },
         async initCheck(claim: any, researchId: any) {
-            await fetch(`http://localhost:8000/api/v1/influencers/check_claim/?claim=${claim}&research=${researchId}`, {
+            await fetch(`https://veriwell-63c21104cb44.herokuapp.com/api/v1/influencers/check_claim/?claim=${claim}&research=${researchId}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -107,7 +107,7 @@ export default defineComponent({
             })
         },
         async fetchResearch(researchId: any) {
-            const response = await fetch(`http://localhost:8000/api/v1/claim_researches/${researchId}`, {
+            const response = await fetch(`https://veriwell-63c21104cb44.herokuapp.com/api/v1/claim_researches/${researchId}`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
